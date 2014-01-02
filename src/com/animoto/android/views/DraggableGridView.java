@@ -180,8 +180,7 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
 
 		int leftPos = getIndexFromCoor(x - (childSize / 4), y);
 		int rightPos = getIndexFromCoor(x + (childSize / 4), y);
-		if (leftPos == -1 && rightPos == -1) // touch is in the middle of
-												// nowhere
+		if (leftPos == -1 && rightPos == -1) // touch is in the middle of nowhere
 			return -1;
 		if (leftPos == rightPos) // touch is in the middle of a visual
 			return -1;
@@ -194,8 +193,7 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
 		if (dragged < target)
 			return target - 1;
 
-		// Toast.makeText(getContext(), "Target: " + target + ".",
-		// Toast.LENGTH_SHORT).show();
+		// Toast.makeText(getContext(), "Target: " + target + ".", Toast.LENGTH_SHORT).show();
 		return target;
 	}
 
@@ -370,8 +368,7 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
 
 	protected void reorderChildren()
 	{
-		// FIGURE OUT HOW TO REORDER CHILDREN WITHOUT REMOVING THEM ALL AND
-		// RECONSTRUCTING THE LIST!!!
+		// FIGURE OUT HOW TO REORDER CHILDREN WITHOUT REMOVING THEM ALL AND RECONSTRUCTING THE LIST!!!
 		if (onRearrangeListener != null)
 			onRearrangeListener.onRearrange(dragged, lastTarget);
 		ArrayList<View> children = new ArrayList<View>();
@@ -382,8 +379,7 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
 		}
 		removeAllViews();
 		while (dragged != lastTarget)
-			if (lastTarget == children.size()) // dragged and dropped to the
-												// right of the last element
+			if (lastTarget == children.size()) // dragged and dropped to the right of the last element
 			{
 				children.add(children.remove(dragged));
 				dragged = lastTarget;
