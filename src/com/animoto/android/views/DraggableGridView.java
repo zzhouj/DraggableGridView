@@ -8,6 +8,7 @@ package com.animoto.android.views;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
@@ -26,6 +27,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 
+@SuppressLint("WrongCall")
 public class DraggableGridView extends ViewGroup implements View.OnTouchListener, View.OnClickListener, View.OnLongClickListener {
 	// layout vars
 	public static float childRatio = .9f;
