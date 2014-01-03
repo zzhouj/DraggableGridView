@@ -13,7 +13,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
 import android.os.Handler;
-import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
@@ -28,7 +27,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 
 @SuppressLint("WrongCall")
-public class DraggableGridView extends ViewGroup implements View.OnTouchListener, View.OnClickListener, View.OnLongClickListener {
+public class DraggableGridView extends ViewGroup implements View.OnTouchListener, View.OnClickListener,
+		View.OnLongClickListener {
 	// layout vars
 	public static float childRatio = .9f;
 	protected int colCount, childSize, padding, dpi, scroll = 0;
@@ -49,13 +49,48 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
 	public DraggableGridView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		setListeners();
-		handler.removeCallbacks(updateTask);
-		handler.postAtTime(updateTask, SystemClock.uptimeMillis() + 500);
+		// handler.removeCallbacks(updateTask);
+		// handler.postAtTime(updateTask, SystemClock.uptimeMillis() + 500);
 		setChildrenDrawingOrderEnabled(true);
 
 		DisplayMetrics metrics = new DisplayMetrics();
 		((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		dpi = metrics.densityDpi;
+	}
+
+	@Override
+	protected void onAttachedToWindow() {
+		super.onAttachedToWindow();
+		handler.removeCallbacks(updateTask);
+		handler.postDelayed(updateTask, 100);
+	}
+
+	@Override
+	protected void onDetachedFromWindow() {
+		super.onDetachedFromWindow();
+		handler.removeCallbacks(updateTask);
+	}
+
+	@Override
+	protected void onWindowVisibilityChanged(int visibility) {
+		super.onWindowVisibilityChanged(visibility);
+		if (visibility == View.VISIBLE) {
+			handler.removeCallbacks(updateTask);
+			handler.postDelayed(updateTask, 100);
+		} else {
+			handler.removeCallbacks(updateTask);
+		}
+	}
+
+	@Override
+	public void onWindowFocusChanged(boolean hasWindowFocus) {
+		super.onWindowFocusChanged(hasWindowFocus);
+		if (hasWindowFocus) {
+			handler.removeCallbacks(updateTask);
+			handler.postDelayed(updateTask, 100);
+		} else {
+			handler.removeCallbacks(updateTask);
+		}
 	}
 
 	protected void setListeners()
@@ -73,6 +108,7 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
 	protected Runnable updateTask = new Runnable() {
 		public void run()
 		{
+			// Log.d(VIEW_LOG_TAG, "updateTask.run");
 			if (dragged != -1)
 			{
 				if (lastY < padding * 3 && scroll > 0)
@@ -183,15 +219,15 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
 		if (leftPos == -1 && rightPos == -1) // touch is in the middle of nowhere
 			return -1;
 		if (leftPos == rightPos) // touch is in the middle of a visual
-			return -1;
+			return leftPos;
 
 		int target = -1;
-		if (rightPos > -1)
-			target = rightPos;
-		else if (leftPos > -1)
-			target = leftPos + 1;
-		if (dragged < target)
-			return target - 1;
+		// if (rightPos > -1)
+		// target = rightPos;
+		// else if (leftPos > -1)
+		// target = leftPos + 1;
+		// if (dragged < target)
+		// return target - 1;
 
 		// Toast.makeText(getContext(), "Target: " + target + ".", Toast.LENGTH_SHORT).show();
 		return target;
@@ -220,7 +256,8 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
 			if (secondaryOnClickListener != null)
 				secondaryOnClickListener.onClick(view);
 			if (onItemClickListener != null && getLastIndex() != -1)
-				onItemClickListener.onItemClick(null, getChildAt(getLastIndex()), getLastIndex(), getLastIndex() / colCount);
+				onItemClickListener.onItemClick(null, getChildAt(getLastIndex()), getLastIndex(),
+						getLastIndex() / colCount);
 		}
 	}
 
@@ -447,7 +484,8 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
 
 	protected int getMaxScroll()
 	{
-		int rowCount = (int) Math.ceil((double) getChildCount() / colCount), max = rowCount * childSize + (rowCount + 1) * padding - getHeight();
+		int rowCount = (int) Math.ceil((double) getChildCount() / colCount), max = rowCount * childSize
+				+ (rowCount + 1) * padding - getHeight();
 		return max;
 	}
 
